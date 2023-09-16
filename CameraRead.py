@@ -20,21 +20,8 @@ def blur_rectangle(frame, x, y, width, height, blur_kernel_size=(15, 15)):
 
     return blurred_frame
 
+def get_points_for_drow_x_on_center_frame_on_center(w,h,width_rectangle_h,height_rectangle_h,width_rectangle_v,height_rectangle_v):
 
-
-def readIPWriteTOFile():
-    video = cv2.VideoCapture(0)
-    ok, frame = video.read()
-    w = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
-    h = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    video_writer = cv2.VideoWriter("output.mov", fourcc, 25, (w, h))
-
-    width_rectangle_h = 80
-    height_rectangle_h = 20
-
-    width_rectangle_v = 100
-    height_rectangle_v = 20
 
     x = int (((w - width_rectangle_h)/2))
     y = int(((h - height_rectangle_h)/2))
@@ -54,17 +41,56 @@ def readIPWriteTOFile():
     top_left_for_v1 = (y2,x2)
     bottom_right_for_v1 = (y2+ height_rectangle_v, x2 +  int((width_rectangle_v - height_rectangle_h) / 2))
 
+    h_coords =  (top_left_for_h, bottom_right_for_h)
+    v_coords = (top_left_for_v, bottom_right_for_v)
+    v1_coords = (top_left_for_v1, bottom_right_for_v1)
+
+    return h_coords, v_coords, v1_coords
+
+
+
+
+
+def readIPWriteTOFile():
+    video = cv2.VideoCapture(0)
+    ok, frame = video.read()
+    w = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
+    h = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    fourcc = cv2.VideoWriter_fourcc(*'XVID')
+    video_writer = cv2.VideoWriter("output.mov", fourcc, 25, (w, h))
+
+    width_rectangle_h = 80
+    height_rectangle_h = 20
+
+    width_rectangle_v = 100
+    height_rectangle_v = 20
+
+    h_coords, v_coords, v1_coords = get_points_for_drow_x_on_center_frame_on_center(w,h,width_rectangle_h,height_rectangle_h,width_rectangle_v,height_rectangle_v)
+
 
 
     while True:
         ok, frame = video.read()
+        center_x = w // 2
+        center_y = h // 2
+
+        # Определяем цвет, ближайший к центральному пикселю
+        central_pixel_color = frame[center_y, center_x]
+        if central_pixel_color.max() == central_pixel_color[0]:
+            color = (255,0,0)
+        elif central_pixel_color.max() == central_pixel_color[1]:
+            color = (0,255,0)
+        else:
+            color = (0,0,255)
+
+        print (central_pixel_color)
 
 
-        cv2.rectangle(frame, top_left_for_v, bottom_right_for_v, (0, 0, 255), 2)
-        cv2.rectangle(frame, top_left_for_v1, bottom_right_for_v1, (0, 0, 255), 2)
-        cv2.rectangle(frame, top_left_for_h, bottom_right_for_h, (0, 0, 255), 2)
+        cv2.rectangle(frame, v_coords[0], v_coords[1], color, -1)
+        cv2.rectangle(frame, v1_coords[0], v1_coords[1], color, -1)
+        cv2.rectangle(frame, h_coords[0], h_coords[1], color, -1)
 
-        blurred_frame = blur_rectangle(frame, x, y, width_rectangle_h, height_rectangle_h)
+        blurred_frame = blur_rectangle(frame, h_coords[0][1], h_coords[1][0], width_rectangle_h, height_rectangle_h)
 
 
         cv2.imshow('frame', blurred_frame)
