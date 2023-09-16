@@ -55,7 +55,7 @@ def readIPWriteTOFile():
     bottom_right_for_v1 = (y2+ height_rectangle_v, x2 +  int((width_rectangle_v - height_rectangle_h) / 2))
 
 
-#zxc
+
     while True:
         ok, frame = video.read()
 
