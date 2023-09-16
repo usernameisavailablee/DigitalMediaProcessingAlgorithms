@@ -19,7 +19,6 @@ def blur_rectangle(frame, x, y, width, height, blur_kernel_size=(15, 15)):
     blurred_frame[y:y+height, x:x+width] = blurred_roi
 
     return blurred_frame
-#sdfds
 
 
 
