@@ -47,12 +47,19 @@ def get_points_for_drow_x_on_center_frame_on_center(w,h,width_rectangle_h,height
 
     return h_coords, v_coords, v1_coords
 
-def drow_RGB_X(frame,h_coords, v_coords, v1_coords,color):
-        cv2.rectangle(frame, v_coords[0], v_coords[1], color, -1)
-        cv2.rectangle(frame, v1_coords[0], v1_coords[1], color, -1)
-        cv2.rectangle(frame, h_coords[0], h_coords[1], color, -1)
+def drow_X(frame, width_rectangle_h, height_rectangle_h, width_rectangle_v, height_rectangle_v, color):
+    height, width, channels = frame.shape
+    h_coords, v_coords, v1_coords = get_points_for_drow_x_on_center_frame_on_center(width,height,width_rectangle_h,height_rectangle_h,width_rectangle_v,height_rectangle_v)
+    cv2.rectangle(frame, v_coords[0], v_coords[1], color, 2)
+    cv2.rectangle(frame, v1_coords[0], v1_coords[1], color, 2)
+    cv2.rectangle(frame, h_coords[0], h_coords[1], color, 2)
 
-
+def drow_RGB_X(frame, width_rectangle_h, height_rectangle_h, width_rectangle_v, height_rectangle_v, color):
+    height, width, channels = frame.shape
+    h_coords, v_coords, v1_coords = get_points_for_drow_x_on_center_frame_on_center(width,height,width_rectangle_h,height_rectangle_h,width_rectangle_v,height_rectangle_v)
+    cv2.rectangle(frame, v_coords[0], v_coords[1], color, -1)
+    cv2.rectangle(frame, v1_coords[0], v1_coords[1], color, -1)
+    cv2.rectangle(frame, h_coords[0], h_coords[1], color, -1)
 
 
 
@@ -89,13 +96,11 @@ def readIPWriteTOFile():
         else:
             color = (0,0,255)
         print (central_pixel_color)
+        color1 = (0,0,255)
+#        drow_RGB_X(frame, width_rectangle_h, height_rectangle_h, width_rectangle_v, height_rectangle_v, color)
+        drow_X (frame, width_rectangle_h, height_rectangle_h, width_rectangle_v, height_rectangle_v, color1)
 
-        drow_RGB_X(frame,h_coords, v_coords, v1_coords,color)
-
-
-
-
-        blurred_frame = blur_rectangle(frame, h_coords[0][1], h_coords[1][0], width_rectangle_h, height_rectangle_h)
+        blurred_frame = blur_rectangle(frame, h_coords[0][0], h_coords[0][1], width_rectangle_h, height_rectangle_h)
 
 
         cv2.imshow('frame', blurred_frame)
@@ -106,8 +111,6 @@ def readIPWriteTOFile():
 
     video.release()
     cv2.destroyAllWindows()
-
-# Ваша функция blur_rectangle должна быть определена в коде до вызова readIPWriteTOFile
 
 
 def print_cam():
