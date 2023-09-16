@@ -47,6 +47,12 @@ def get_points_for_drow_x_on_center_frame_on_center(w,h,width_rectangle_h,height
 
     return h_coords, v_coords, v1_coords
 
+def drow_RGB_X(frame,h_coords, v_coords, v1_coords,color):
+        cv2.rectangle(frame, v_coords[0], v_coords[1], color, -1)
+        cv2.rectangle(frame, v1_coords[0], v1_coords[1], color, -1)
+        cv2.rectangle(frame, h_coords[0], h_coords[1], color, -1)
+
+
 
 
 
@@ -82,13 +88,12 @@ def readIPWriteTOFile():
             color = (0,255,0)
         else:
             color = (0,0,255)
-
         print (central_pixel_color)
 
+        drow_RGB_X(frame,h_coords, v_coords, v1_coords,color)
 
-        cv2.rectangle(frame, v_coords[0], v_coords[1], color, -1)
-        cv2.rectangle(frame, v1_coords[0], v1_coords[1], color, -1)
-        cv2.rectangle(frame, h_coords[0], h_coords[1], color, -1)
+
+
 
         blurred_frame = blur_rectangle(frame, h_coords[0][1], h_coords[1][0], width_rectangle_h, height_rectangle_h)
 
