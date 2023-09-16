@@ -105,7 +105,7 @@ def readIPWriteTOFile():
 
         cv2.imshow('frame', blurred_frame)
 
-        video_writer.write(frame)
+        video_writer.write(blurred_frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
