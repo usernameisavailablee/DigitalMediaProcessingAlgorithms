@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import requests
 
 def blur_rectangle(frame, x, y, width, height, blur_kernel_size=(15, 15)):
     # Создаем копию фрейма, чтобы не изменять оригинальный кадр.
@@ -64,7 +65,8 @@ def drow_RGB_X(frame, width_rectangle_h, height_rectangle_h, width_rectangle_v, 
 
 
 
-def readIPWriteTOFile():
+def readWriteTOFile():
+
     video = cv2.VideoCapture(0)
     ok, frame = video.read()
     w = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -97,15 +99,16 @@ def readIPWriteTOFile():
             color = (0,0,255)
         print (central_pixel_color)
         color1 = (0,0,255)
-#        drow_RGB_X(frame, width_rectangle_h, height_rectangle_h, width_rectangle_v, height_rectangle_v, color)
-        drow_X (frame, width_rectangle_h, height_rectangle_h, width_rectangle_v, height_rectangle_v, color1)
+        drow_RGB_X(frame, width_rectangle_h, height_rectangle_h, width_rectangle_v, height_rectangle_v, color)
+#        drow_X (frame, width_rectangle_h, height_rectangle_h, width_rectangle_v, height_rectangle_v, color1)
 
-        blurred_frame = blur_rectangle(frame, h_coords[0][0], h_coords[0][1], width_rectangle_h, height_rectangle_h)
+#        blurred_frame = blur_rectangle(frame, h_coords[0][0], h_coords[0][1], width_rectangle_h, height_rectangle_h)
 
 
-        cv2.imshow('frame', blurred_frame)
-
-        video_writer.write(blurred_frame)
+#        cv2.imshow('frame', blurred_frame)
+#        video_writer.write(blurred_frame)
+        cv2.imshow('frame', frame)
+        video_writer.write(frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
@@ -148,4 +151,4 @@ def print_cam():
 # Вызываем функцию для запуска камеры.
 #print_cam()
 
-readIPWriteTOFile()
+readWriteTOFile()
