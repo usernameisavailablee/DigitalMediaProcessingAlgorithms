@@ -13,11 +13,11 @@ cap.set(4, 240)
 cv2.namedWindow("Control")
 
 # Начальные значения параметров для цветового фильтра в HSV
-iLowH = 170
-iHighH = 179
-iLowS = 150
+iLowH = 0
+iHighH = 25
+iLowS = 100
 iHighS = 255
-iLowV = 60
+iLowV = 140
 iHighV = 255
 
 # Создаем ползунки для настройки параметров цветового фильтра
@@ -27,6 +27,25 @@ cv2.createTrackbar("LowS", "Control", iLowS, 255, lambda x: None)  # Добав�
 cv2.createTrackbar("HighS", "Control", iHighS, 255, lambda x: None)  # Добавлен пустой обработчик
 cv2.createTrackbar("LowV", "Control", iLowV, 255, lambda x: None)  # Добавлен пустой обработчик
 cv2.createTrackbar("HighV", "Control", iHighV, 255, lambda x: None)  # Добавлен пустой обработчик
+
+
+def update_values(x):
+    global iLowH, iHighH, iLowS, iHighS, iLowV, iHighV
+    iLowH = cv2.getTrackbarPos("LowH", "Control")
+    iHighH = cv2.getTrackbarPos("HighH", "Control")
+    iLowS = cv2.getTrackbarPos("LowS", "Control")
+    iHighS = cv2.getTrackbarPos("HighS", "Control")
+    iLowV = cv2.getTrackbarPos("LowV", "Control")
+    iHighV = cv2.getTrackbarPos("HighV", "Control")
+
+# Установите обработчик события для обновления параметров
+cv2.createTrackbar("LowH", "Control", iLowH, 179, update_values)
+cv2.createTrackbar("HighH", "Control", iHighH, 179, update_values)
+cv2.createTrackbar("LowS", "Control", iLowS, 255, update_values)
+cv2.createTrackbar("HighS", "Control", iHighS, 255, update_values)
+cv2.createTrackbar("LowV", "Control", iLowV, 255, update_values)
+cv2.createTrackbar("HighV", "Control", iHighV, 255, update_values)
+
 
 start_time = time.time()
 frames = 0
@@ -60,6 +79,16 @@ while True:
     dArea = moments["m00"]
 
     if dArea > 10000:
+        x = int(dM10 / dArea)
+        y = int(dM01 / dArea)
+
+        # Рисуем горизонтальную линию (горизонтальная палка креста)
+        cv2.line(imgOriginal, (x - 10, y), (x + 10, y), (255, 0, 0), 2)
+
+        # Рисуем вертикальную линию (вертикальная палка креста)
+        cv2.line(imgOriginal, (x, y - 10), (x, y + 10), (255, 0, 0), 2)
+
+
         posX = int(dM10 / dArea)
         posY = int(dM01 / dArea)
 
@@ -72,6 +101,7 @@ while True:
     # Отображаем результат
     cv2.imshow("Thresholded Image", imgThresholded)
     cv2.imshow("Original", imgOriginal)
+    cv2.imshow("HCV", imgHSV)
 
     if cv2.waitKey(30) == 27:  # Ждем нажатия клавиши "Esc" для выхода
         print("esc key is pressed by user")
