@@ -62,7 +62,8 @@ def drow_RGB_X(frame, width_rectangle_h, height_rectangle_h, width_rectangle_v, 
     cv2.rectangle(frame, v1_coords[0], v1_coords[1], color, -1)
     cv2.rectangle(frame, h_coords[0], h_coords[1], color, -1)
 
-
+def drow_malt():
+    pass
 
 
 def readWriteTOFile():
@@ -84,8 +85,11 @@ def readWriteTOFile():
 
 
 
+
     while True:
+
         ok, frame = video.read()
+        save_frame = frame.copy()
         center_x = w // 2
         center_y = h // 2
 
@@ -99,7 +103,65 @@ def readWriteTOFile():
             color = (0,0,255)
         print (central_pixel_color)
         color1 = (0,0,255)
-        drow_RGB_X(frame, width_rectangle_h, height_rectangle_h, width_rectangle_v, height_rectangle_v, color)
+        frame = cv2.convertScaleAbs(frame, alpha=0.9, beta=0)
+#        drow_RGB_X(frame, width_rectangle_h, height_rectangle_h, width_rectangle_v, height_rectangle_v, color)
+
+
+        center_x = w // 2
+        center_y = h // 2
+
+
+        pointsUp = np.array([[280, 80], [360, 80], [320, 300]])
+        pointsLeft = np.array([[180, 200], [180, 280], [360, 240]])
+        pointsDown = np.array([[280, 420], [360, 420], [320, 200]])
+        pointsRight = np.array([[460, 200], [460, 280], [260, 240]])
+
+
+        cv2.fillPoly(frame, pts=[pointsUp], color=(255, 0, 0))
+        cv2.fillPoly(frame, pts=[pointsLeft], color=(255, 0, 0))
+        cv2.fillPoly(frame, pts=[pointsDown], color=(255, 0,0))
+        cv2.fillPoly(frame, pts=[pointsRight], color=(255, 0, 0))
+
+        # cv2.polylines(frame, [pointsUp], isClosed=True, color=(255, 0, 0), thickness=2)
+        # cv2.polylines(frame, [pointsLeft], isClosed=True, color=(255, 0, 0), thickness=2)
+        # cv2.polylines(frame, [pointsDown], isClosed=True, color=(255, 0, 0), thickness=2)
+        # cv2.polylines(frame, [pointsRight], isClosed=True, color=(255, 0, 0), thickness=2)
+
+
+
+        lower_bound = np.array([255, 0, 0], dtype=np.uint8)
+        upper_bound = np.array([255, 255, 255], dtype=np.uint8)
+        mask = cv2.inRange(frame, lower_bound, upper_bound)
+        kernel = np.ones((5,5),np.uint8)
+        mask = cv2.erode(mask,kernel,iterations = 1)
+        img2_fg = cv2.bitwise_and(save_frame,save_frame,mask = mask)
+
+
+
+
+        rows,cols,channels = frame.shape
+        roi = frame[0:rows, 0:cols]
+
+        mask_inv = cv2.bitwise_not(mask)
+        # Now black-out the area of logo in ROI
+        img1_bg = cv2.bitwise_and(roi,roi,mask = mask_inv)
+        # Take only region of logo from logo image.
+        img2_fg = cv2.bitwise_and(img2_fg,img2_fg,mask = mask)
+        # Put logo in ROI and modify the main image
+        dst = cv2.add(img1_bg,img2_fg)
+        frame[0:rows, 0:cols ] = dst
+
+
+        # dst = cv2.add(frame,img2_fg)
+        #
+        # result = cv2.bitwise_and(frame, img2_fg, mask=mask)
+        #
+        # itg = (frame,img2_fg)
+
+
+
+
+
 #        drow_X (frame, width_rectangle_h, height_rectangle_h, width_rectangle_v, height_rectangle_v, color1)
 
 #        blurred_frame = blur_rectangle(frame, h_coords[0][0], h_coords[0][1], width_rectangle_h, height_rectangle_h)
@@ -107,7 +169,7 @@ def readWriteTOFile():
 
 #        cv2.imshow('frame', blurred_frame)
 #        video_writer.write(blurred_frame)
-        cv2.imshow('frame', frame)
+        cv2.imshow('frame1', frame)
         video_writer.write(frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
