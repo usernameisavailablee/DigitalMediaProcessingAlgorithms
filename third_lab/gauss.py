@@ -2,53 +2,56 @@ import numpy as np
 import cv2
 
 # Задание 1: Построение матрицы Гаусса
-def build_gaussian_matrix(n, sigma):
-    center = n // 2
-    gaussian_matrix = np.zeros((n, n))
-    for x in range(n):
-        for y in range(n):
-            gaussian_matrix[x, y] = (1 / (2 * np.pi * sigma**2)) * np.exp(-((x - center)**2 + (y - center)**2) / (2 * sigma**2))
-    return gaussian_matrix
+def gaussian_matrix(size, sigma):
+    kernel = np.fromfunction(
+        lambda x, y: (1/ (2 * np.pi * sigma ** 2)) *
+                     np.exp(- ((x - (size-1)/2) ** 2 + (y - (size-1)/2) ** 2) / (2 * sigma ** 2)),
+        (size, size)
+    )
+    return kernel / np.sum(kernel)
 
-# Задание 2: Нормирование матрицы Гаусса
-def normalize_gaussian_matrix(gaussian_matrix):
-    return gaussian_matrix / np.sum(gaussian_matrix)
+# Задание 2: Нормировать матрицу Гаусса
+def normalize_gaussian_matrix(matrix):
+    return matrix / np.sum(matrix)
 
-# Задание 3: Реализация фильтра Гаусса
-def apply_gaussian_filter(image, kernel):
-    return cv2.filter2D(image, -1, kernel)
+# Задание 3: Реализовать фильтр Гаусса средствами Python
+def gaussian_blur(image, size, sigma):
+    kernel = gaussian_matrix(size, sigma)
+    result = cv2.filter2D(image, -1, kernel)
+    return result
 
-# Задание 4: Применение фильтра Гаусса для изображения
-def apply_gaussian_blur_to_image(image, sigma, kernel_size):
-    gaussian_matrix = build_gaussian_matrix(kernel_size, sigma)
-    normalized_gaussian_matrix = normalize_gaussian_matrix(gaussian_matrix)
-    blurred_image = apply_gaussian_filter(image, normalized_gaussian_matrix)
-    return blurred_image
+# Задание 4: Применить фильтр Гаусса с разными параметрами
+def apply_gaussian_blur(image_path, size, sigma, output_path):
+    image = cv2.imread(image_path, cv2.IMREAD_COLOR)
+    blurred_image = gaussian_blur(image, size, sigma)
+    cv2.imwrite(output_path, blurred_image)
 
-# Загрузка изображения
-image_path = "img.jpg"
-image = cv2.imread(image_path)
+# Задание 5: Реализовать размытие Гаусса с использованием OpenCV
+def gaussian_blur_opencv(image_path, output_path, size, sigma):
+    image = cv2.imread(image_path, cv2.IMREAD_COLOR)
+    blurred_image = cv2.GaussianBlur(image, (size, size), sigma)
+    cv2.imwrite(output_path, blurred_image)
 
-# Задание 4: Применение фильтра Гаусса для разных значений sigma и размеров матрицы свертки
-sigma_1 = 1.0
-sigma_2 = 2.0
-kernel_size_1 = 3
-kernel_size_2 = 5
+# Выполнение заданий
+sizes = [3, 5, 7]
+sigma = 5.0  # Задайте нужное значение сигмы
 
-blurred_image_1 = apply_gaussian_blur_to_image(image, sigma_1, kernel_size_1)
-blurred_image_2 = apply_gaussian_blur_to_image(image, sigma_1, kernel_size_2)
-blurred_image_3 = apply_gaussian_blur_to_image(image, sigma_2, kernel_size_1)
-blurred_image_4 = apply_gaussian_blur_to_image(image, sigma_2, kernel_size_2)
+for size in sizes:
+    gauss_matrix = gaussian_matrix(size, sigma)
+    normalized_matrix = normalize_gaussian_matrix(gauss_matrix)
+    print(f"Normalized Gaussian Matrix for size {size}x{size}:\n{normalized_matrix}\n")
 
-# Задание 5: Размытие Гаусса с использованием OpenCV
-blurred_image_opencv = cv2.GaussianBlur(image, (kernel_size_1, kernel_size_1), sigma_1)
+image_path = 'img.jpg'  # Замените на свой путь к изображению
+output_path = 'output_image.jpg'  # Путь для сохранения размытого изображения
 
-# Вывод результатов
-cv2.imshow("Original Image", image)
-cv2.imshow("Blurred Image 1", blurred_image_1)
-cv2.imshow("Blurred Image 2", blurred_image_2)
-cv2.imshow("Blurred Image 3", blurred_image_3)
-cv2.imshow("Blurred Image 4", blurred_image_4)
-cv2.imshow("Blurred Image OpenCV", blurred_image_opencv)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+for size in sizes:
+    output_path_size = f'output_image_size_{size}_sigma_{sigma}.jpg'
+    apply_gaussian_blur(image_path, size, sigma, output_path_size)
+    blurred_image = cv2.imread(output_path_size)
+    cv2.imshow(f"size {size}, sigma {sigma}", blurred_image)
+    cv2.waitKey(0)  # Ожидание нажатия клавиши
+
+output_path_opencv = 'output_image_opencv.jpg'  # Путь для сохранения размытого изображения с OpenCV
+gaussian_blur_opencv(image_path, output_path_opencv, size=5, sigma=1.0)
+
+print("All tasks completed.")
