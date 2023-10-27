@@ -26,6 +26,11 @@ def apply_gaussian_blur(image_path, size, sigma, output_path):
     blurred_image = gaussian_blur(image, size, sigma)
     cv2.imwrite(output_path, blurred_image)
 
+def apply_gaussian_blur(image,size,sigma):
+    blurred_image = gaussian_blur(image,size,sigma)
+    return blurred_image
+    
+
 # Задание 5: Реализовать размытие Гаусса с использованием OpenCV
 def gaussian_blur_opencv(image_path, output_path, size, sigma):
     image = cv2.imread(image_path, cv2.IMREAD_COLOR)
