@@ -31,3 +31,28 @@ def gaussian_blur_opencv(image_path, output_path, size, sigma):
     image = cv2.imread(image_path, cv2.IMREAD_COLOR)
     blurred_image = cv2.GaussianBlur(image, (size, size), sigma)
     cv2.imwrite(output_path, blurred_image)
+
+def my_filter(img, kernel):
+    try:
+      img_height, img_width, img_canals = img.shape
+    except:
+      img_height, img_width = img.shape
+      img_canals = 1
+
+    kernel_height, kernel_width = kernel.shape
+
+    result_height = img_height - kernel_height + 1
+    result_width = img_width - kernel_width + 1
+
+    result = np.zeros((result_height, result_width), dtype=np.float32)
+
+    if img_canals != 1:
+      for i in range(result_height):
+        for j in range(result_width):
+          for canal in range(img_canals):
+            result[i, j, canal] = np.sum(img[i:i + kernel_height, j:j + kernel_width, canal] * kernel)
+    else:
+      for i in range(result_height):
+        for j in range(result_width):
+          result[i, j] = np.sum(img[i:i + kernel_height, j:j + kernel_width] * kernel)
+    return result

@@ -30,7 +30,6 @@ cv::Mat gaussianBlur(const cv::Mat& inputImage, int size, double sigma) {
 }
 
 int main() {
-    // Задайте путь к изображению и путь для сохранения размытого изображения
     std::string imagePath = "img.jpg";
     std::string outputPath = "output_image.jpg";
 
