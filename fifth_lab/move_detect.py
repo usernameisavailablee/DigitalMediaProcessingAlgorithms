@@ -10,7 +10,7 @@ from gauss_methods import *
 
 def read_write_to_file():
 
-    video = cv2.VideoCapture("input_video/motions.mov")
+    video = cv2.VideoCapture("input_video/main_video.mov")
     ok, frame = video.read()
     w = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
     h = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -22,6 +22,7 @@ def read_write_to_file():
     gray_start_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     blurred_start_frame = apply_gaussian_blur(gray_start_frame,11,5.0)
     start_frame = blurred_start_frame
+    out = cv2.VideoWriter('out_moving.avi', cv2.VideoWriter_fourcc(*'DIVX'), 30, (w, h))
 
     while True:
         copy_start_frame = start_frame.copy()
@@ -50,6 +51,7 @@ def read_write_to_file():
             if area > min_area:
                 # Вы можете выполнить дополнительные действия с контуром,
                 # например, нарисовать его или выполнить другую обработку.
+                out.write(frame)
                 cv2.drawContours(frame, [contour], 0, (0, 255, 0), 2)
 #        area = cv2.contourArea(contours_for_frame_diff)
 
@@ -58,7 +60,7 @@ def read_write_to_file():
         cv2.imshow('frame1', frame)
 
         video_writer.write(frame)
-        if cv2.waitKey(50) & 0xFF == ord('q'):
+        if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
     video.release()
