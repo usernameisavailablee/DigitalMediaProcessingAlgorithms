@@ -15,23 +15,28 @@ def read_write_to_file():
     w = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
     h = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    video_writer = cv2.VideoWriter("output_video/output.mov", fourcc, 25, (w, h))
+#    video_writer = cv2.VideoWriter("output_video/output.mov", fourcc, 25, (w, h))
 
     #И фрейм прочитали
-    ok, start_frame = video.read()
+    ok, start_frame = video.read(0)
     gray_start_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     blurred_start_frame = apply_gaussian_blur(gray_start_frame,11,5.0)
     start_frame = blurred_start_frame
-    out = cv2.VideoWriter('out_moving.avi', cv2.VideoWriter_fourcc(*'DIVX'), 30, (w, h))
-
+    out = cv2.VideoWriter('output_video/out_moving.avi', cv2.VideoWriter_fourcc(*'DIVX'), 100, (w, h))
+    flag = False
     while True:
-        copy_start_frame = start_frame.copy()
+
+        if flag:
+            copy_start_frame = blurred_frame.copy()
+
 
         ok, frame = video.read()
         gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         blurred_frame = apply_gaussian_blur(gray_frame,11,5.0)
-
+        if flag == False:
+            copy_start_frame = blurred_frame.copy()
         frame_diff = cv2.absdiff(blurred_frame,copy_start_frame);
+        flag = True
 
 
 #        frame_diff = cv2.threshold(frame_diff);
@@ -45,7 +50,7 @@ def read_write_to_file():
 
         contours_for_frame_diff, _ = cv2.findContours(frame_diff, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-        min_area = 200
+        min_area = 100
         for contour in contours_for_frame_diff:
             area = cv2.contourArea(contour)
             if area > min_area:
@@ -59,7 +64,7 @@ def read_write_to_file():
         cv2.imshow('blurred_frame',blurred_frame)
         cv2.imshow('frame1', frame)
 
-        video_writer.write(frame)
+#        video_writer.write(frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
