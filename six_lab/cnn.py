@@ -42,3 +42,5 @@ def ccn():
   his = model.fit(x_train, y_train_cat, batch_size=32, epochs=5, validation_split=0.2)
 
   model.evaluate(x_test, y_test_cat)
+
+ccn()

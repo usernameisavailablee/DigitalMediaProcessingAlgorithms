@@ -81,3 +81,5 @@ def perceptron():
     plt.imshow(x_false[i], cmap=plt.cm.binary)
 
   plt.show()
+
+perceptron()
