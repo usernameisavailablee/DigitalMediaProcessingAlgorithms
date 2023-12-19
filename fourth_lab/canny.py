@@ -21,7 +21,7 @@ class CannyEdgeDetector:
         try:
             img = cv2.imread(path)
         except:
-            img = cv2.imread('Ленок.png')
+            img = cv2.imread('burn.jpg')
 
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
@@ -93,5 +93,5 @@ class CannyEdgeDetector:
 
 # Пример использования:
 detector = CannyEdgeDetector()
-result = detector.start("img_djaina.jpg", 7, 1.0, 0.5, 1)
+result = detector.start("bottle.jpg", 7, 1.0, 0.5, 1)
 cv2.imwrite("canny_output_dj.jpg", result)
